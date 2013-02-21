@@ -1,17 +1,16 @@
-import static org.junit.Assert.assertEquals;
-
 public class Test {
 	public static void main(String[] args) {
-		Deque<String> list2 = new Deque<String>();
-		list2.addLast("5");
-		list2.addLast("4");
-		list2.addLast("3");
-		list2.addLast("2");
-		list2.addLast("1");
-		int counter = 1;
-		for (String s : list2) {
-			assertEquals(String.valueOf(counter), s);
+		RandomizedQueue<String> list = new RandomizedQueue<>();
+		
+		list.enqueue("item1");
+		list.enqueue("item2");
+		list.enqueue("item3");
+		list.enqueue("item4");
+		list.enqueue("item5");
+		int counter = 0;
+		for(String s : list) {
 			counter++;
 		}
+		StdOut.printf("Counter=%i\n", counter);
 	}
-}
+} 

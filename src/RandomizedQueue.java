@@ -1,7 +1,6 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
 public class RandomizedQueue<Item> implements Iterable<Item> {
 	private int size = 0;
 	private int used = 0;
@@ -20,11 +19,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 	public int size() // return the number of items on the queue
 	{
-		return this.size;
+		return this.used;
 	}
 	
 	private void resize(int capacity) {
 		//@SuppressWarnings("unchecked")
+//		if(capacity == 0) {
+//			capacity = 1;
+//		}
+		
 		Item[] b = (Item[]) new Object[capacity];
 		int counter = 0;
 		for(int i = 0; i < size; i++){
@@ -53,7 +56,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 	public Item dequeue() // delete and return a random item
 	{
-		if(used == 0) {
+		if(isEmpty()) {
 			throw new NoSuchElementException();
 		}
 		Item t = null;
@@ -64,11 +67,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		}
 		a[index] = null;
 		used--;
-		if(size == index){
+		if(size == (index+1)){
 			size--;
 		}
 		if(used <= a.length/4) {
-			//if((a.length / 2) > 4)
+			if((a.length / 2) >= 1)
 				this.resize(a.length /2);
 		}
 		return t;
@@ -76,6 +79,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 	public Item sample() // return (but do not delete) a random item
 	{
+		if(isEmpty()) {
+			throw new NoSuchElementException();
+		}
 		Item ret = null;
 		while(ret == null) {
 			int index = StdRandom.uniform(this.size);
@@ -93,23 +99,33 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	private class RandomizedQueueIter implements Iterator<Item>
 	{
 		private int index = 0;
+		private boolean[] returned = new boolean[a.length];
+		private int leftElements = used;
+		
 		@Override
 		public boolean hasNext() {
-			return !isEmpty();
+			return leftElements > 0;
 		}
 
 		@Override
 		public Item next() {
-//			if(index < size) {
-//				throw new NoSuchElementException();
-//			}
-//			Item tmp = a[index];
-//			while(tmp == null) {
-//				index++;
-//				tmp = a[index];
-//			} 
-//			return tmp;
-			return sample();
+			if(leftElements <= 0) {
+				throw new NoSuchElementException();
+			}
+			
+			Item it = null;
+			while(it == null) {
+				int idx = StdRandom.uniform(size);
+				it = a[idx];
+				if(returned[idx]) {
+					it = null;
+				} else {
+					returned[idx] = true;
+				}
+			}
+			
+			leftElements--;
+			return it;
 		}
 
 		@Override
